@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.javawebtutor</groupId>
+  <artifactId>JPAMavenClient</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>JPAMavenClient</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties><dependencyManagement>
+        <dependencies>
+           
+           <dependency>
+    <groupId>org.jboss.as</groupId>
+    <artifactId>jboss-as-ejb-client-bom</artifactId>
+    <version>7.5.13.Final-redhat-2</version>
+    
+</dependency>
+        </dependencies>
+    </dependencyManagement>
+  <dependencies>
+
+  
+   <!-- Import the transaction spec API, we use runtime scope because we aren't 
+            using any direct reference to the spec API in our client code -->
+        
+        <dependency>
+    <groupId>org.jboss.spec.javax.transaction</groupId>
+    <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+    <version>1.0.1.Final</version>
+    <scope>runtime</scope>
+</dependency>  
+<!-- Import the EJB 3.1 API, we use runtime scope because we aren't using 
+            any direct reference to EJB spec API in our client code -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>1.0.2.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+        
+     <!-- We depend on the EJB remote business interfaces of this application -->   
+        
+          <!-- JBoss EJB client API jar. We use runtime scope because the EJB client 
+            API isn't directly used in this example. We just need it in our runtime classpath -->
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-ejb-client</artifactId>
+            <version>2.1.7.Final</version>
+            <scope>runtime</scope>
+        </dependency> 
+        
+          <!-- client communications with the server use XNIO -->
+        
+        <dependency>
+    <groupId>org.jboss.xnio</groupId>
+    <artifactId>xnio-api</artifactId>
+    <version>3.4.5.Final</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>org.jboss.xnio</groupId>
+    <artifactId>xnio-nio</artifactId>
+    <version>3.4.5.Final</version>
+            <scope>runtime</scope>
+</dependency>
+
+            <!-- The client needs JBoss remoting to access the server -->
+        <dependency>
+            <groupId>org.jboss.remoting</groupId>
+            <artifactId>jboss-remoting</artifactId>
+            <version>4.0.21.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- Remote EJB accesses can be secured -->
+        <dependency>
+            <groupId>org.jboss.sasl</groupId>
+            <artifactId>jboss-sasl</artifactId>
+            <version>1.0.5.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+ 
+        <!-- data serialization for invoking remote EJBs -->
+        <dependency>
+            <groupId>org.jboss.marshalling</groupId>
+            <artifactId>jboss-marshalling-river</artifactId>
+            <version>1.4.11.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+       
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+   </dependencies>
+
+<build>
+        <plugins>
+            <!-- Enforce Java 1.8 -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+ 
+            <!-- Add the maven exec plugin to allow us to run a java program via maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
+                    <arguments>
+                        <!-- automatically creates the classpath using all project dependencies, 
+                            also adding the project build directory -->
+                        <argument>-classpath</argument>
+                        <classpath>
+                        </classpath>
+                        <argument>ejb.primer.Client</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>java.ejb.primer.Client</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+    </build>
+    
+    
+
+</project>
